@@ -24,5 +24,17 @@ module.exports = {
         } catch (error) {
             next(error)
         }
+    },
+    GetAllLearningPath: async(req, res, next) => {
+        try {
+            const DTO = await learningPathService.GetAllLearingPath(req.query)
+            
+            return res.json({
+                message: 'ok',
+                data: DTO
+            })
+        } catch (error) {
+            next(error);
+        }
     }
 }

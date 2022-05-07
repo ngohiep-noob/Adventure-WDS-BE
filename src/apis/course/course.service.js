@@ -2,6 +2,7 @@ const createHttpError = require("http-errors");
 const { default: mongoose } = require("mongoose");
 const cloudinary = require("../../config/cloudinary.config");
 const Course = require("../../model/course.js");
+const {StoreThumbToDB: StoreImageToDB} = require('../../service/uploadThumbnail.js')
 
 module.exports = {
   CreateNewCourse: async ({ body, files }) => {
@@ -11,35 +12,17 @@ module.exports = {
       rating = rating ? rating : 0;
 
       //upload img
-      let resDB;
+      let resDB = await Course.create({ name, views, rating, description });
+      
       if (files) {
         //const pdfRes = await cloudinary.uploader.upload(files.pdf[0].path)
-        const videoRes = await cloudinary.uploader.upload(files.video[0].path, {
-          resource_type: 'video'
-        });
-        const thumbRes = await cloudinary.uploader.upload(files.thumb[0].path);
-        resDB = await Course.create({
-          name,
-          views,
-          rating,
-          description,
-          thumbnail: {
-            url: thumbRes.secure_url,
-            id: thumbRes.public_id,
-          },
-          video: {
-            url: videoRes.secure_url,
-            id: videoRes.public_id,
-          },
-          // pdf: {
-          //   url: pdfRes.secure_url,
-          //   id: pdfRes.public_id
-          // }
-        });
-      } else {
-        resDB = await Course.create({ name, views, rating, description });
+        // const videoRes = await cloudinary.uploader.upload(files.video[0].path);
+        const thumbInfo = await StoreImageToDB(Course, resDB._id, files.thumb[0].path)
+        
+        resDB.thumbnail = thumbInfo;
       }
 
+    
       return {
         message: "success",
         data: resDB,

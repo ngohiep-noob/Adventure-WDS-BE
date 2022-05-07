@@ -22,7 +22,7 @@ const CourseSchema = new mongoose.Schema({
     thumbnail: {
         url: {
             type: String,
-            default: 'https://i.pinimg.com/736x/89/4f/4b/894f4b2f803a5618a3c02795b361baa6.jpg'
+            default: 'https://media.istockphoto.com/photos/flying-color-books-on-pastel-yellow-background-picture-id1304915362?b=1&k=20&m=1304915362&s=170667a&w=0&h=1oBLMT9JLYt6Ju3LbSppu8Fga92YfvSHiPu7zQlculg='
         }, 
         id: {
             type: String, 

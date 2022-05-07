@@ -24,7 +24,7 @@ module.exports = {
             if (user) {
                 throw new createHttpError(400, 'User already exist!');
             }
-
+            
             const salt = await bcrypt.genSalt(10);
             const hashPassword = await bcrypt.hash(password, salt);
 

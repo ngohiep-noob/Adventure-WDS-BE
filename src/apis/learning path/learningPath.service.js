@@ -2,6 +2,7 @@ const createHttpError = require("http-errors");
 const LearningPath = require("../../model/learningPath");
 const Cloudinary = require("../../config/cloudinary.config");
 const { default: mongoose } = require("mongoose");
+const { StoreThumbToDB } = require("../../service/uploadThumbnail");
 
 module.exports = {
   CreateLearningPath: async ({ body, files }) => {
@@ -9,25 +10,22 @@ module.exports = {
       let { name, rating, courses } = body;
       rating = rating || 0;
       coursesArr = courses.split(",");
-      let databaseRes;
+      let databaseRes = await LearningPath.create({
+        name,
+        rating,
+        courses: [...coursesArr],
+      });
       if (files) {
-        const thumbRes = await Cloudinary.uploader.upload(files.thumb[0].path);
+        const thumbRes = await StoreThumbToDB(
+          LearningPath,
+          databaseRes._id,
+          files.thumb[0].path
+        );
 
-        databaseRes = await LearningPath.create({
-          name,
-          rating,
-          courses: [...coursesArr],
-          thumbnail: {
-            url: thumbRes.secure_url,
-            id: thumbRes.public_id,
-          },
-        });
-      } else {
-        databaseRes = await LearningPath.create({
-          name,
-          rating,
-          courses: [...coursesArr],
-        });
+        databaseRes.thumbnail = {
+          url: thumbRes.secure_url,
+          id: thumbRes.public_id,
+        };
       }
       console.log(databaseRes);
       return {
@@ -50,7 +48,7 @@ module.exports = {
         throw new createHttpError(404, "Learning path not found!");
       }
       //   console.log(courses);
-      resDB = await LearningPath.findById(id).populate("courses");
+      await resDB.populate("courses");
 
       return {
         message: "success",
@@ -58,6 +56,55 @@ module.exports = {
       };
     } catch (error) {
       throw error;
+    }
+  },
+  GetAllLearingPath: async ({ qPage, qSort, pageSize }) => {
+    let learingPaths;
+    let startIndex;
+    try {
+      if (qPage) {
+        qPage = parseInt(qPage);
+        qPage < 1 ? (qPage = 1) : qPage;
+        startIndex = (qPage - 1) * pageSize;
+      }
+      if (qPage && !qSort) {
+        learingPaths = await LearningPath.find()
+          .skip(startIndex)
+          .limit(pageSize);
+      } else if (qPage && qSort) {
+        if (qSort === "asc") {
+          learingPaths = await LearningPath.find()
+            .sort({ _id: 1 })
+            .skip(startIndex)
+            .limit(pageSize);
+        } else if (qSort === "desc") {
+          learingPaths = await LearningPath.find()
+            .sort({ _id: -1 })
+            .skip(startIndex)
+            .limit(pageSize);
+        }
+      } else if (!qPage && qSort) {
+        if (qSort === "asc") {
+          learingPaths = await LearningPath.find().sort({ _id: 1 });
+        } else if (qSort === "desc") {
+          learingPaths = await LearningPath.find().sort({ _id: -1 });
+        }
+      } else {
+        learingPaths = await LearningPath.find();
+      }
+
+      const fullLearingPath = await Promise.all(
+        learingPaths.map((e) => {
+          return e.populate("courses");
+        })
+      );
+
+      console.log(fullLearingPath);
+      return {
+        learingPaths,
+      };
+    } catch (error) {
+      throw new createHttpError(error);
     }
   },
 };

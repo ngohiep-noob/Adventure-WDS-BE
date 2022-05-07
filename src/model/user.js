@@ -25,7 +25,11 @@ const UserSchema = new mongoose.Schema(
             type: String,
             min: 5,
             require: true,
-        }
+        }, 
+        courses: [{
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'course'
+        }]
     }, 
     {collection: 'users', timestamps: true}
 )

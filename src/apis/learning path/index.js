@@ -20,4 +20,6 @@ route.post(
 
 route.get("/:id", learningPathController.GetLearningPathById);
 
+route.get('/', learningPathController.GetAllLearningPath);
+
 module.exports = route;
