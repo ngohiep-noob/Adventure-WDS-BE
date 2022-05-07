@@ -4,17 +4,27 @@ const UserSchema = new mongoose.Schema(
     {
         username: {
             type: String,
-            require: true
+            require: true,
+            unique: true
         }, 
-        email: {
-            type: String,
-            require: true,
-            unique: true
+        role: {
+            isTeacher: {
+                type: Boolean,
+                default: false
+            }, 
+            isProUser: {
+                type: Boolean,
+                default: false
+            }
         },
-        user_id: {
+        refreshToken: {
             type: String,
+            default: null,
+        },
+        password: {
+            type: String,
+            min: 5,
             require: true,
-            unique: true
         }
     }, 
     {collection: 'users', timestamps: true}

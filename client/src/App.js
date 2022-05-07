@@ -1,11 +1,9 @@
 import "./App.css";
 import app from "./config/firebase-config";
 import {
-  createUserWithEmailAndPassword,
   getAuth,
   GoogleAuthProvider,
-  onAuthStateChanged,
-  signInWithEmailAndPassword,
+  onAuthStateChanged, 
   signInWithPopup,
   signOut,
 } from "firebase/auth";
@@ -15,14 +13,12 @@ const axios = require('axios').default;
 function App() {
   const [auth, setAuth] = useState(false);
   const [token, setToken] = useState('');
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
 
   useEffect(() => {
     onAuthStateChanged(getAuth(app), async (userCred) => {
       if (userCred) {
         setAuth(true);
-        if(token != '') {
+        if(token !== '') {
           const res = await fetchData()
           console.log(res)
         }
@@ -39,7 +35,7 @@ function App() {
     };
   };
   //#region 
-  const SignUpWithEmail = async (e) => {
+  /*const SignUpWithEmail = async (e) => {
     e.preventDefault();
     const auth = getAuth(app);
     try {
@@ -82,16 +78,8 @@ function App() {
     } catch (error) {
       console.log(error);
     }
-  };
+  };*/
   //#endregion
-  
-  const UpdateEmail = (e) => {
-    setEmail(e.target.value);
-  };
-
-  const UpdatePw = (e) => {
-    setPassword(e.target.value);
-  };
 
   const SignOut = async () => {
     try {
