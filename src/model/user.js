@@ -29,6 +29,10 @@ const UserSchema = new mongoose.Schema(
         courses: [{
             type: mongoose.Schema.Types.ObjectId,
             ref: 'course'
+        }], 
+        rooms: [{
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'room'
         }]
     }, 
     {collection: 'users', timestamps: true}
