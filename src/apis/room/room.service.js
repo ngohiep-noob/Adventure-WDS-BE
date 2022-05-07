@@ -1,4 +1,5 @@
 const Room = require("../../model/room.js");
+const User = require('../../model/user')
 const createHttpError = require("http-errors");
 const mongoose = require("mongoose");
 const { StoreThumbToDB } = require("../../service/uploadThumbnail.js");
@@ -28,6 +29,11 @@ module.exports = {
           id: thumbRes.public_id,
         };
       }
+
+      ///update room field of creator
+      await User.findByIdAndUpdate(creatorID, {
+        $push: { rooms: resDB._id },
+      });
 
       return {
         data: resDB,

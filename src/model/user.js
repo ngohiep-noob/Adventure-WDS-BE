@@ -25,14 +25,17 @@ const UserSchema = new mongoose.Schema(
             type: String,
             min: 5,
             require: true,
+            select: false
         }, 
         courses: [{
             type: mongoose.Schema.Types.ObjectId,
-            ref: 'course'
+            ref: 'course', 
+            default: []
         }], 
         rooms: [{
             type: mongoose.Schema.Types.ObjectId,
-            ref: 'room'
+            ref: 'room',
+            default: []
         }]
     }, 
     {collection: 'users', timestamps: true}

@@ -22,7 +22,8 @@ const RoomSchema = new mongoose.Schema({
     },
     members: [{
         type: mongoose.Types.ObjectId,
-        ref: 'users'
+        ref: 'users', 
+        default: []
     }],
     creator: {
         type: mongoose.Types.ObjectId,

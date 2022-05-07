@@ -16,11 +16,18 @@ const LearningPathSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
-    courses: [{ type: mongoose.Types.ObjectId, ref: "course" }],
+    courses: [
+      {
+        type: mongoose.Types.ObjectId,
+        ref: "course",
+        default: [],
+      },
+    ],
     thumbnail: {
       url: {
         type: String,
-        default: "https://media.istockphoto.com/photos/flying-color-books-on-pastel-yellow-background-picture-id1304915362?b=1&k=20&m=1304915362&s=170667a&w=0&h=1oBLMT9JLYt6Ju3LbSppu8Fga92YfvSHiPu7zQlculg=",
+        default:
+          "https://media.istockphoto.com/photos/flying-color-books-on-pastel-yellow-background-picture-id1304915362?b=1&k=20&m=1304915362&s=170667a&w=0&h=1oBLMT9JLYt6Ju3LbSppu8Fga92YfvSHiPu7zQlculg=",
       },
       id: {
         type: String,

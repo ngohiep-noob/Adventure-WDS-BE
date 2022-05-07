@@ -1,10 +1,10 @@
-const route = require('express').Router()
-const userController = require('./user.controller')
+const route = require("express").Router();
+const { VerifyToken } = require("../../middleware/Authorization");
+const userController = require("./user.controller");
 
-route.post('/enroll', userController.EnrollCourse);
+route.post("/enroll", VerifyToken, userController.EnrollCourse);
 
-route.post('/join-room/:id', userController.JoinRoom);
+route.post("/join-room/:roomId", VerifyToken, userController.JoinRoom);
 
-route.post('/create-room', userController.CreateRoom);
-
+route.get('/', VerifyToken, userController.GetUserById)
 module.exports = route;

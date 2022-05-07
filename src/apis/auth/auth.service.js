@@ -65,7 +65,7 @@ module.exports = {
     }, 
     Login: async ({ username, password: plainPassword }) => {
         try {
-            let filterUser = await User.findOne({ username });
+            let filterUser = await User.findOne({ username }).select('+password');
             if (filterUser) {
                 if (await bcrypt.compare(plainPassword, filterUser.password)) {
                     const accessToken = jwt.sign(
