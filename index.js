@@ -30,8 +30,8 @@ require("./src/commons/socket")(server);
 
 app.use("/api", require("./src/apis/index"));
 
-app.get("/test", (req, res, next) => {
-  return res.json({ Respose: "🚀🚀🚀🚀" });
+app.get("/", (req, res, next) => {
+  return res.json({ Respose: "Api is running🚀🚀🚀🚀" });
 });
 
 app.use((error, req, res, next) => {
