@@ -28,7 +28,12 @@ const RoomSchema = new mongoose.Schema({
     creator: {
         type: mongoose.Types.ObjectId,
         ref: 'users'
-    }
+    },
+    chat: [{
+        type: mongoose.Types.ObjectId,
+        ref: 'chat',
+        default: []
+    }]
 }, {collection: 'room', timestamps: true})
 
 module.exports = mongoose.model('room', RoomSchema);

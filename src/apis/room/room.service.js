@@ -5,11 +5,18 @@ const mongoose = require("mongoose");
 const { StoreThumbToDB } = require("../../service/uploadThumbnail.js");
 
 module.exports = {
-  CreateRoom: async ({ body, files }) => {
+  CreateRoom: async ({ body, files, userInfo }) => {
     try {
-      const { creatorID, memberIDs, name, learningPathID } = body;
+      const {userId: creatorID} = userInfo
+      const { memberIDs, name, learningPathID } = body;
 
-      const members = memberIDs.split(",");
+      let members
+      if(memberIDs) {
+        members = memberIDs.split(",");
+      }else {
+        members = [];
+      }
+
       const resDB = await Room.create({
         name,
         learningPath: learningPathID,
@@ -17,7 +24,7 @@ module.exports = {
         members: [...members],
       });
 
-      if (files) {
+      if (files.thumb) {
         const thumbRes = await StoreThumbToDB(
           Room,
           resDB._id,

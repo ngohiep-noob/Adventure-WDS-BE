@@ -6,5 +6,6 @@ route.post("/enroll", VerifyToken, userController.EnrollCourse);
 
 route.post("/join-room/:roomId", VerifyToken, userController.JoinRoom);
 
-route.get('/', VerifyToken, userController.GetUserById)
+route.get('/:id', userController.GetUserById)
+
 module.exports = route;

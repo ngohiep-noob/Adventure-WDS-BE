@@ -31,7 +31,7 @@ module.exports = {
   },
   GetUserById: async(req, res, next) => {
       try {
-        const DTO = await userService.GetUserById(req.userInfo.userId);
+        const DTO = await userService.GetUserById(req.params.id);
 
         return res.json({
             message: 'ok',

@@ -25,24 +25,36 @@
   </body>
 
   <script src="/socket.io/socket.io.js"></script>
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
   <script>
     const socket = io();
     const showChat = document.querySelector("#show-chat");
     const chatForm = document.querySelector("#chat-form");
-    const displayName = prompt("Enter your name");
-    const sendMessage = (message) => {
-      socket.emit("on-chat", {
-        message,
-        displayName,
+    const senderId = prompt('Enter sender id')
+
+    // const sender1 = "627657beadcae0d5465bc84b",
+    //   sender2 = "627657b8adcae0d5465bc843";
+    const roomId = '627721eeb1263687614d946b'
+    const sendMessage = (content) => {
+      socket.emit("from-client", {
+        content,
+        senderId,
+        roomId
       });
     };
 
-    socket.on("user-message", (data) => {
-      const li = document.createElement("li");
+    const renderMessage = (message) => {
+      message.map((m) => {
+        const li = document.createElement("li");
 
-      li.textContent = data.displayName + ": " + data.message
+        li.textContent = m.senderName + ": " + m.content;
 
-      showChat.appendChild(li);
+        showChat.appendChild(li);
+      });
+    };
+
+    socket.on("from-server", (data) => {
+      renderMessage([data]);
     });
 
     const chatMess = document.querySelector("#chat-message");
@@ -53,6 +65,25 @@
       const message = chatMess.value;
       chatMess.value = "";
       sendMessage(message);
+    });
+    const token =
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2Mjc3MWU3Y2IxOTg4NjBjZjljYTI0MWQiLCJ1c2VybmFtZSI6InN0dWRlbnQgNyIsInJvbGUiOnsiaXNUZWFjaGVyIjpmYWxzZSwiaXNQcm9Vc2VyIjpmYWxzZX0sImlhdCI6MTY1MTk3NTAyNiwiZXhwIjoxNjUxOTkzMDI2fQ.II1maf-0krbPtapxewq7a45t_NfaUhyT_9A7gRjfhFM";
+
+    window.addEventListener("load", async () => {
+      
+      //fetch history chat
+      const res = await axios({
+        method: "get",
+        url: "http://localhost:3000/api/chat/627721eeb1263687614d946b",
+        headers: {
+          Authorization: "Bearer " + token,
+        },
+      });
+      const chatHis = [...res.data.chatHistory];
+      
+      renderMessage(chatHis);
+
+      console.log(res);
     });
   </script>
 </html>
