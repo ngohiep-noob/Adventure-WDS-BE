@@ -11,12 +11,17 @@ module.exports = {
       const {userId: creatorID} = userInfo
       const { memberIDs, name, learningPathID } = body;
 
+      if(!name || !learningPathID) {
+        throw new createHttpError(400, 'name and learning path id is required!');
+      }
+
       let members
       if(memberIDs) {
         members = memberIDs.split(",");
       }else {
         members = [];
       }
+
 
       const resDB = await Room.create({
         name,
@@ -27,8 +32,13 @@ module.exports = {
 
       //update room to learning path
       await learningPath.findByIdAndUpdate(learningPathID, {
-        
+        $push: {rooms: resDB._id}
       })
+
+      ///update room field of creator
+      await User.findByIdAndUpdate(creatorID, {
+        $push: { rooms: resDB._id },
+      });
 
       if (files.thumb) {
         const fileId = files.thumb[0].filename.split("/").at(-1),
@@ -44,17 +54,13 @@ module.exports = {
         var thumbnail = thumbInfo;
       }
 
-      ///update room field of creator
-      await User.findByIdAndUpdate(creatorID, {
-        $push: { rooms: resDB._id },
-      });
       
       return {
         message: "ok",
         data: {
           _id: resDB._id, 
           name: resDB.name,
-          learingPaths: resDB.learingPaths,
+          learingPaths: resDB.learningPath,
           members: resDB.members,
           creator: resDB.creator,
           thumbnail 

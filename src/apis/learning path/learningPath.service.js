@@ -9,8 +9,8 @@ module.exports = {
       let { name, rating, courses } = body;
       rating = rating || 0;
 
-      if(!courses) {
-        throw new createHttpError(400, "Courses is required!")
+      if(!courses || !name) {
+        throw new createHttpError(400, "Courses and name is required!")
       }
 
       const coursesArr = courses.split(",");
