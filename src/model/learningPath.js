@@ -42,7 +42,7 @@ const LearningPathSchema = new mongoose.Schema(
       },
     ],
   },
-  { collection: "learing-path", timestamps: true }
+  { collection: "learning-path", timestamps: true }
 );
 
 module.exports = mongoose.model("LearningPath", LearningPathSchema);
