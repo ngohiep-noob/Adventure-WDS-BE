@@ -14,7 +14,7 @@ route.get('/:roomId', VerifyToken, async(req, res, next) => {
     try {
         const {userId} = req.userInfo;
         const {roomId} = req.params;
-        const LIMIT = 5;
+        const LIMIT = 50;
         //fetch chat from database
         const room = await Room.findById(roomId);
 
@@ -35,10 +35,11 @@ route.get('/:roomId', VerifyToken, async(req, res, next) => {
                 senderName: c.sender.username
             }
         })
-
-        if(historyChat.length > 5) {
+    
+        if(historyChat.length > LIMIT) {
             historyChat = historyChat.slice(0, LIMIT);
         }
+        console.log(historyChat)
 
         res.json({
             chatHistory: historyChat

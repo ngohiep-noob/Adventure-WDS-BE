@@ -10,7 +10,7 @@ const createError = require("http-errors");
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(express.static(__dirname + '/public/hello.html'))
+
 app.use(
   morgan(":method :url :status :res[content-length] - :response-time ms")
 );
@@ -18,20 +18,15 @@ connectDatabase();
 
 const http = require("http");
 const server = http.createServer(app);
-// const io = new Server(server);
+
 
 //realtime chatting
 require("./src/commons/socket")(server);
 
-
-// app.use((req, res, next) => {
-//     next(new createError(404, 'NOT FOUND'));
-// });
-
 app.use("/api", require("./src/apis/index"));
 
 app.get("/", (req, res, next) => {
-  return res.json({ Respose: "Api is running🚀🚀🚀🚀" });
+  return res.sendFile(__dirname + '/public/hello.html')
 });
 
 app.use((error, req, res, next) => {

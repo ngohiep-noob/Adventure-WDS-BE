@@ -67,14 +67,14 @@
       sendMessage(message);
     });
     const token =
-      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2Mjc3MWU4MGIxOTg4NjBjZjljYTI0MjEiLCJ1c2VybmFtZSI6InN0dWRlbnQgOCIsInJvbGUiOnsiaXNUZWFjaGVyIjpmYWxzZSwiaXNQcm9Vc2VyIjpmYWxzZX0sImlhdCI6MTY1MTk5OTk2MCwiZXhwIjoxNjUyMDE3OTYwfQ.a-XDZN1QnqWy7ky00zO8ZXfoEE8EtsdFCtzh49rC4kU";
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2Mjc3MWU4MGIxOTg4NjBjZjljYTI0MjEiLCJ1c2VybmFtZSI6InN0dWRlbnQgOCIsInJvbGUiOnsiaXNUZWFjaGVyIjpmYWxzZSwiaXNQcm9Vc2VyIjpmYWxzZX0sImlhdCI6MTY1MjAyNzg1NywiZXhwIjoxNjUyMDQ1ODU3fQ.0lsTD6i22-rnDx2sb2ksDuyFLQ0o4gFAY-cPqfaJvjo";
 
     window.addEventListener("load", async () => {
       
       //fetch history chat
       const res = await axios({
         method: "get",
-        url: "http://calm-cove-06883.herokuapp.com/api/chat/627721eeb1263687614d946b",
+        url: `https://calm-cove-06883.herokuapp.com/api/chat/${roomId}`,
         headers: {
           Authorization: "Bearer " + token,
         },
