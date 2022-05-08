@@ -4,12 +4,13 @@ const { VerifyToken } = require("../../middleware/Authorization");
 const multer = require("multer");
 const storage = require("../../middleware/Cloudinary.storage");
 
-const upload = multer({ storage: storage });
+const uploadImage = multer({ storage: storage('WDS/Rooms') });
+require('../../config/cloudinary.config')
 
 route.post(
   "/",
   VerifyToken,
-  upload.fields([{ name: "thumb" }]),
+  uploadImage.fields([{ name: "thumb" }]),
   roomController.CreateRoom
 );
 

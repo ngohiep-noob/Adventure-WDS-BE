@@ -6,7 +6,8 @@ const learningPathController = require("./learningPath.controller");
 const storage = require("../../middleware/Cloudinary.storage");
 const multer = require("multer");
 
-const upload = multer({ storage: storage });
+const upload = multer({ storage: storage('WDS/Learning-Path') });
+require('../../config/cloudinary.config')
 
 const route = require("express").Router();
 

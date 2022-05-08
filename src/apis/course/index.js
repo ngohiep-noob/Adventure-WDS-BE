@@ -1,10 +1,14 @@
 const route = require("express").Router();
-const { VerifyTeacher, VerifyToken } = require("../../middleware/Authorization.js");
+const {
+  VerifyTeacher,
+  VerifyToken,
+} = require("../../middleware/Authorization.js");
 const courseController = require("./course.controller.js");
-const storage = require("../../middleware/Cloudinary.storage");
 const multer = require("multer");
+const storage = require("../../middleware/Cloudinary.storage");
 
-const upload = multer({ storage: storage });
+const upload = multer({ storage: storage('WDS/Courses') });
+require('../../config/cloudinary.config')
 
 //get course
 route.get("/:id", courseController.GetCourseById);
@@ -16,7 +20,7 @@ route.post(
   "/",
   VerifyToken,
   VerifyTeacher,
-  upload.fields([{ name: "thumb" }, { name: "pdf" }, {name: "video"}]),
+  upload.fields([{ name: "thumb", maxCount: 1 }, {name: 'videos', maxCount: 5}]),
   courseController.CreateNewCourse
 );
 

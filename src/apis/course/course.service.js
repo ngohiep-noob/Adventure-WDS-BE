@@ -1,8 +1,10 @@
 const createHttpError = require("http-errors");
 const { default: mongoose } = require("mongoose");
-const cloudinary = require("../../config/cloudinary.config");
 const Course = require("../../model/course.js");
-const {StoreThumbToDB: StoreImageToDB} = require('../../service/uploadThumbnail.js')
+const {
+  StoreThumbToDB,
+  StoreVideoToDB,
+} = require("../../service/uploadMedia.js");
 
 module.exports = {
   CreateNewCourse: async ({ body, files }) => {
@@ -10,22 +12,46 @@ module.exports = {
       let { name, views, rating, description } = body;
       views = views ? views : 0;
       rating = rating ? rating : 0;
+      if (!description || !name) {
+        throw new createHttpError(400, "Description and name is required!");
+      }
+      const resDB = await Course.create({ name, views, rating, description });
 
-      //upload img
-      let resDB = await Course.create({ name, views, rating, description });
-      
-      if (files) {
-        //const pdfRes = await cloudinary.uploader.upload(files.pdf[0].path)
-        // const videoRes = await cloudinary.uploader.upload(files.video[0].path);
-        const thumbInfo = await StoreImageToDB(Course, resDB._id, files.thumb[0].path)
-        
-        resDB.thumbnail = thumbInfo;
+      let resUploadMedia = {};
+
+      //upload file
+      if (files.thumb) {
+        const fileId = files.thumb[0].filename.split("/").at(-1),
+          filePath = files.thumb[0].path;
+
+        const thumbInfo = await StoreThumbToDB(
+          Course,
+          resDB._id,
+          filePath,
+          fileId
+        );
+
+        resUploadMedia.thumbnail = thumbInfo;
       }
 
-    
+      if (files.videos) {
+        const videosInfo = await StoreVideoToDB(
+          Course,
+          resDB._id,
+          files.videos
+        );
+
+        resUploadMedia.videos = videosInfo;
+      }
+
       return {
         message: "success",
-        data: resDB,
+        data: {
+          _id: resDB._id,
+          name: resDB.name,
+          desc: resDB.description,
+          ...resUploadMedia,
+        },
       };
     } catch (error) {
       throw createHttpError(500, error.message);

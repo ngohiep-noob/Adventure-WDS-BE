@@ -2,7 +2,7 @@ const Room = require("../../model/room.js");
 const User = require('../../model/user')
 const createHttpError = require("http-errors");
 const mongoose = require("mongoose");
-const { StoreThumbToDB } = require("../../service/uploadThumbnail.js");
+const { StoreThumbToDB } = require("../../service/uploadMedia.js");
 
 module.exports = {
   CreateRoom: async ({ body, files, userInfo }) => {
@@ -25,25 +25,34 @@ module.exports = {
       });
 
       if (files.thumb) {
-        const thumbRes = await StoreThumbToDB(
+        const fileId = files.thumb[0].filename.split("/").at(-1),
+          filePath = files.thumb[0].path;
+
+        const thumbInfo = await StoreThumbToDB(
           Room,
           resDB._id,
-          files.thumb[0].path
+          filePath,
+          fileId
         );
 
-        resDB.thumbnail = {
-          url: thumbRes.secure_url,
-          id: thumbRes.public_id,
-        };
+        var thumbnail = thumbInfo;
       }
 
       ///update room field of creator
       await User.findByIdAndUpdate(creatorID, {
         $push: { rooms: resDB._id },
       });
-
+      
       return {
-        data: resDB,
+        message: "ok",
+        data: {
+          _id: resDB._id, 
+          name: resDB.name,
+          learingPaths: resDB.learingPaths,
+          members: resDB.members,
+          creator: resDB.creator,
+          thumbnail 
+        }
       };
     } catch (error) {
       throw new createHttpError(error);

@@ -1,36 +1,46 @@
 const createHttpError = require("http-errors");
 const LearningPath = require("../../model/learningPath");
-const Cloudinary = require("../../config/cloudinary.config");
 const { default: mongoose } = require("mongoose");
-const { StoreThumbToDB } = require("../../service/uploadThumbnail");
+const { StoreThumbToDB } = require("../../service/uploadMedia");
 
 module.exports = {
   CreateLearningPath: async ({ body, files }) => {
     try {
       let { name, rating, courses } = body;
       rating = rating || 0;
-      coursesArr = courses.split(",");
-      let databaseRes = await LearningPath.create({
+
+      if(!courses) {
+        throw new createHttpError(400, "Courses is required!")
+      }
+
+      const coursesArr = courses.split(",");
+
+      const resDB = await LearningPath.create({
         name,
         rating,
         courses: [...coursesArr],
       });
-      if (files) {
-        const thumbRes = await StoreThumbToDB(
+
+      if (files.thumb) {
+        const fileId = files.thumb[0].filename.split("/").at(-1),
+          filePath = files.thumb[0].path;
+
+        const thumbInfo = await StoreThumbToDB(
           LearningPath,
-          databaseRes._id,
-          files.thumb[0].path
+          resDB._id,
+          filePath,
+          fileId
         );
 
-        databaseRes.thumbnail = {
-          url: thumbRes.secure_url,
-          id: thumbRes.public_id,
-        };
+        var thumbnail = thumbInfo;
       }
-      console.log(databaseRes);
+      
       return {
         message: "success",
-        data: databaseRes,
+        data: {
+          'learning-path': resDB,
+          thumbnail,
+        }
       };
     } catch (error) {
       const errorStatus = error.statusCode || 500;
