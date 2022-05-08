@@ -10,7 +10,7 @@ const createError = require("http-errors");
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
+app.use(express.static(__dirname + '/public/hello.html'))
 app.use(
   morgan(":method :url :status :res[content-length] - :response-time ms")
 );
