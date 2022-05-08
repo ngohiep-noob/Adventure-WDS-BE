@@ -114,4 +114,21 @@ module.exports = {
       throw new createHttpError(error);
     }
   },
+  SearchByName: async (name) => {
+    try {
+      if (!name) {
+        throw new createHttpError(400, "courseName is required!");
+      }
+
+      const resDB = await Course.find({
+        name: {
+          $regex: name,
+          $options: 'i',
+        },
+      });
+      return resDB;
+    } catch (error) {
+      throw new createHttpError(error.message || 500, error.message);
+    }
+  },
 };

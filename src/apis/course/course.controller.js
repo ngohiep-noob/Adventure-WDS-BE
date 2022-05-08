@@ -34,5 +34,17 @@ module.exports = {
         } catch (error) {
             next(error)
         }
+    },
+    SearchCourse: async(req, res, next) => {
+        try {
+            const DTO = await courseService.SearchByName(req.params.name);
+
+            return res.json({
+                message: 'success',
+                response: DTO
+            })
+        } catch (error) {
+            next(error);
+        }
     }
 }

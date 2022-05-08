@@ -24,4 +24,7 @@ route.post(
   courseController.CreateNewCourse
 );
 
+//search course
+route.get('/search/:name', courseController.SearchCourse);
+
 module.exports = route;
