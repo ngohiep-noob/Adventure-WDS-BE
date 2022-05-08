@@ -53,7 +53,7 @@ const CourseSchema = new mongoose.Schema(
         },
       },
       { default: [] },
-    ],
+    ]
   },
   { collection: "course", timestamps: true }
 );

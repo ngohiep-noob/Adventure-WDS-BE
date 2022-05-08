@@ -24,6 +24,17 @@ module.exports = {
         } catch (error) {
             next(error);
         }
+    },
+    GetToken: async(req, res, next) => {
+        try {
+            const DTO = await authService.GetToken(req.userInfo.userId);
+
+            return res.json({
+                message: 'ok',
+                token: DTO
+            })
+        } catch (errorr) {
+            next(errorr)
+        }
     }
-    
 }

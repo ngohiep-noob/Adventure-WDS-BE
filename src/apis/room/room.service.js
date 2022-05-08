@@ -3,6 +3,7 @@ const User = require('../../model/user')
 const createHttpError = require("http-errors");
 const mongoose = require("mongoose");
 const { StoreThumbToDB } = require("../../service/uploadMedia.js");
+const learningPath = require("../../model/learningPath.js");
 
 module.exports = {
   CreateRoom: async ({ body, files, userInfo }) => {
@@ -23,6 +24,11 @@ module.exports = {
         creator: creatorID,
         members: [...members],
       });
+
+      //update room to learning path
+      await learningPath.findByIdAndUpdate(learningPathID, {
+        
+      })
 
       if (files.thumb) {
         const fileId = files.thumb[0].filename.split("/").at(-1),

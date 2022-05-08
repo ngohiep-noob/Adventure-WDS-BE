@@ -34,6 +34,13 @@ const LearningPathSchema = new mongoose.Schema(
         default: "",
       },
     },
+    rooms: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "room",
+        default: [],
+      },
+    ],
   },
   { collection: "learing-path", timestamps: true }
 );

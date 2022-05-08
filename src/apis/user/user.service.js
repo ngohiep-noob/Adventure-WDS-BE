@@ -10,10 +10,6 @@ const isValidId = (id) => {
 module.exports = {
   EnrollCourse: async (courseIds, userId) => {
     try {
-      if (!isValidId(userId)) {
-        throw new createHttpError(404, "Cannot find user!");
-      }
-
       courseIds.map((id) => {
         if (!isValidId(id))
           throw new createHttpError(404, "Cannot find course!");
@@ -40,6 +36,7 @@ module.exports = {
         await Room.findByIdAndUpdate(roomId, {
             $push: { members: userId },
         })
+        
         const userAfterUpdate = await User.findById(userId).populate('rooms')
         return userAfterUpdate;
     } catch (error) {
