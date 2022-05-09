@@ -7,7 +7,7 @@ const Chat = require('../../model/chat')
 
 route.get('/', (req, res, next) => {
     try {
-        return res.sendFile(path.join(__dirname, "../../../public/test-chat"))
+        return res.sendFile(path.join(__dirname, "../../../public/test-chat.html"))
     } catch (error) {
         next(new createHttpError(500, "internal server error!")); 
     }

@@ -44,7 +44,6 @@ module.exports = {
       });
 
       //   console.log(newVideos);
-
       await model.findByIdAndUpdate(modelId, {
         $push: { videos: { $each: newVideos } },
       });
