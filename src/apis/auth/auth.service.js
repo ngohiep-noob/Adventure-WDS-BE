@@ -5,6 +5,7 @@ const mongoose = require("mongoose");
 const User = require("../../model/user");
 const user = require("../../model/user");
 
+
 const updateRefreshToken = async (userId, refreshToken) => {
   try {
     const user = await User.findOneAndUpdate(
@@ -104,14 +105,14 @@ module.exports = {
             },
           };
         } else {
-          throw new createError(401, "Wrong Password");
+          throw new createHttpError(401, "Wrong Password");
         }
       } else {
-        throw new createError(404, "User not found");
+        throw new createHttpError(404, "User not found");
       }
     } catch (error) {
       if (error) throw error;
-      throw new createError(500, "Internal Error!");
+      throw new createHttpError(500, "Internal Error!");
     }
   },
   GetToken: async (userId) => {
@@ -148,7 +149,7 @@ module.exports = {
         refreshToken,
       };
     } catch (error) {
-      throw new createError(error);
+      throw new createHttpError(error);
     }
   },
   Logout: async (body) => {

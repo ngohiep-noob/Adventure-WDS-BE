@@ -13,18 +13,24 @@ function init(server) {
                 console.log(data);
                 const {senderId, content, roomId} = data;
 
+                if(!senderId || !content) {
+                    throw new createHttpError(400, "senderId and content is requred!");
+                }
+
                 //save chat to chat model
                 const saveChatRes = await Chat.create({
                     sender: senderId,
                     content: content
                 })
 
+                
+                const resDB = await User.findById(senderId);
+
                 //save chat to chat field of room
                 await Room.findByIdAndUpdate(roomId, {
                     $push: { chat: saveChatRes._id}
                 })
                 
-                const resDB = await User.findById(senderId);
                 
                 let responseChat = {
                     senderName: resDB.username,
@@ -33,7 +39,7 @@ function init(server) {
                 io.emit('from-server', responseChat)
                 
             } catch (error) {
-                throw createHttpError(500, error.message)
+                throw createHttpError(error.statusCode || 500, error.message)
             }
         });
     });
