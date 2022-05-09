@@ -19,7 +19,6 @@ connectDatabase();
 const http = require("http");
 const server = http.createServer(app);
 
-
 //realtime chatting
 require("./src/commons/socket")(server);
 
@@ -41,7 +40,7 @@ app.use((error, req, res, next) => {
   });
 });
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 300;
 
 server.listen(PORT, async () => {
   console.log("Server is running on port ", PORT);

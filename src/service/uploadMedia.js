@@ -25,10 +25,13 @@ module.exports = {
     try {
       const newVideos = videoArr.map((vid) => {
         const url = vid.path,
-          id = vid.filename.split("/").at(-1);
+          id = vid.filename.split("/").at(-1),
+          name = vid.originalname.split('.')[0];
+
         return {
           url,
           id,
+          name
         };
       });
 

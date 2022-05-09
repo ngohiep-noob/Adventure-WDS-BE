@@ -2,11 +2,15 @@ const route = require('express').Router()
 const createHttpError = require('http-errors')
 const path = require('path')
 const { VerifyToken } = require('../../middleware/Authorization')
-const chat = require('../../model/chat')
 const Room = require('../../model/room')
+const Chat = require('../../model/chat')
 
 route.get('/', (req, res, next) => {
-    res.sendFile(path.join(__dirname, "../../../public/index.html"))
+    try {
+        return res.sendFile(path.join(__dirname, "../../../public/test-chat"))
+    } catch (error) {
+        next(new createHttpError(500, "internal server error!")); 
+    }
 })
 
 //get history chat
@@ -14,7 +18,7 @@ route.get('/:roomId', VerifyToken, async(req, res, next) => {
     try {
         const {userId} = req.userInfo;
         const {roomId} = req.params;
-        const LIMIT = 50;
+        const LIMIT = 10;
         //fetch chat from database
         const room = await Room.findById(roomId);
 
@@ -24,6 +28,7 @@ route.get('/:roomId', VerifyToken, async(req, res, next) => {
         }
 
         await room.populate('chat')
+        console.log(room.chat)
 
         await Promise.all(room.chat.map(chat => {
             return chat.populate('sender', 'username')
@@ -37,7 +42,7 @@ route.get('/:roomId', VerifyToken, async(req, res, next) => {
         })
     
         if(historyChat.length > LIMIT) {
-            historyChat = historyChat.slice(0, LIMIT);
+            historyChat = historyChat.slice(-LIMIT);
         }
         console.log(historyChat)
 
@@ -51,26 +56,35 @@ route.get('/:roomId', VerifyToken, async(req, res, next) => {
     }
 })
 
-
-route.delete('/clear', VerifyToken,async(req, res, next) => {
+route.delete('/clear/:roomId', VerifyToken,async(req, res, next) => {
     try {
-        const room = await Room.findById(req.params.roomId);
+        const userId = req.userInfo.userId;
+        const roomId = req.params.roomId;
+
+        const room = await Room.findById(roomId);
 
         //check if user are in room
         if(!room.members.includes(userId) && room.creator != userId) {
             throw new createHttpError(401, "User doesn't includes in room!");
         }
 
+        const resDel = await Promise.all(room.chat.map(c => {
+            return Chat.deleteOne({ _id: c })
+        }))
+        
         room.chat = [];
 
-        const resDB = await room.save();
+        await room.save();
+        
+        console.log(resDel);
 
         return res.json({
             message: 'ok',
-            data: resDB
+            data: resDel
         })
     } catch (error) {
         next(error)
     }
 })
+
 module.exports = route;

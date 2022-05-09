@@ -35,6 +35,7 @@ module.exports = {
       }
 
       if (files.videos) {
+        console.log(files.videos[0]);
         const videosInfo = await StoreVideoToDB(
           Course,
           resDB._id,
