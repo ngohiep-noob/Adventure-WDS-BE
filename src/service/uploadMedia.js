@@ -1,54 +1,70 @@
 const createHttpError = require("http-errors");
+const { uploadFile } = require("../middleware/google-uploadFile");
 
 module.exports = {
-  StoreThumbToDB: async (model, modelId, filePath, fileId) => {
+  UploadAndStoreThumbToDB: async (model, modelId, file) => {
     try {
-      const urlEndPoint = filePath.split("/");
-      const finalUrl = [
-        ...urlEndPoint.slice(0, 6),
-        "w_350,h_200,c_scale",
-        ...urlEndPoint.slice(6),
-      ].join("/");
-      console.log(finalUrl);
-      await model.updateOne(
-        { _id: modelId },
-        {
-          thumbnail: {
-            url: finalUrl,
-            id: fileId,
-          },
-        }
-      );
-
+      const uploadRes = await uploadFile(file);
+      await model.findByIdAndUpdate(modelId, {
+        thumbnail: {
+          url: process.env.REDIRECT_GG_FILE + uploadRes.id,
+          id: uploadRes.id,
+        },
+      });
       return {
-        url: finalUrl,
-        id: fileId,
+        url: process.env.REDIRECT_GG_FILE + uploadRes.id,
+        id: uploadRes.id,
       };
-
     } catch (error) {
       throw new createHttpError(500, error.message);
     }
   },
-  StoreVideoToDB: async (model, modelId, videoArr) => {
+  UploadAndStoreVideoToDB: async (model, modelId, videos) => {
     try {
-      const newVideos = videoArr.map((vid) => {
-        const url = vid.path,
-          id = vid.filename.split("/").at(-1),
-          name = vid.originalname.split(".")[0];
+      const videoData = await Promise.all(
+        videos.map((vid) => {
+          return uploadFile(vid);
+        })
+      );
 
+      const newVideos = videoData.map((vid) => {
         return {
-          url,
-          id,
-          name,
+          name: vid.name.split(".")[0],
+          id: vid.id,
+          url: process.env.REDIRECT_GG_FILE + vid.id,
         };
       });
 
-      //   console.log(newVideos);
       await model.findByIdAndUpdate(modelId, {
         $push: { videos: { $each: newVideos } },
       });
 
       return newVideos;
+    } catch (error) {
+      throw new createHttpError(500, error.message);
+    }
+  },
+  UploadAndStorePDFToDB: async (model, modelId, files) => {
+    try {
+      const fileData = await Promise.all(
+        files.map((file) => {
+          return uploadFile(file);
+        })
+      );
+
+      const newFiles = fileData.map((file) => {
+        return {
+          name: file.name.split(".")[0],
+          id: file.id,
+          url: process.env.REDIRECT_GG_FILE + file.id,
+        };
+      });
+
+      await model.findByIdAndUpdate(modelId, {
+        $push: { pdf: { $each: newFiles } },
+      });
+
+      return newFiles;
     } catch (error) {
       throw new createHttpError(500, error.message);
     }

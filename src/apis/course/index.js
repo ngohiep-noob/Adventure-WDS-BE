@@ -7,8 +7,9 @@ const courseController = require("./course.controller.js");
 const multer = require("multer");
 const storage = require("../../middleware/Cloudinary.storage");
 
-const upload = multer({ storage: storage('WDS/Courses') });
-require('../../config/cloudinary.config')
+const uploadDrive = multer();
+// const uploadCloudinary = multer({ storage: storage("WDS/Courses") });
+// require("../../config/cloudinary.config");
 
 //get course
 route.get("/:id", courseController.GetCourseById);
@@ -20,11 +21,22 @@ route.post(
   "/",
   VerifyToken,
   VerifyTeacher,
-  upload.fields([{ name: "thumb", maxCount: 1 }, {name: 'videos', maxCount: 5}]),
+  // uploadCloudinary.fields([
+  //   { name: "thumb", maxCount: 1 },
+  //   { name: "videos", maxCount: 5 },
+  // ]),
+  uploadDrive.fields([
+    { name: "thumb", maxCount: 1 },
+    { name: "videos", maxCount: 5 },
+    { name: "pdf", maxCount: 5 },
+  ]),
   courseController.CreateNewCourse
 );
 
 //search course
-route.get('/search/:name', courseController.SearchCourse);
+route.get("/search/:name", courseController.SearchCourse);
 
+route.delete("/:courseId", courseController.DeleteCourseById);
+
+route.put('/:courseId', courseController.UpdateCourseById);
 module.exports = route;

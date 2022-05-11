@@ -46,5 +46,29 @@ module.exports = {
         } catch (error) {
             next(error);
         }
+    },
+    DeleteCourseById: async(req, res, next) => {
+        try {
+            const DTO = await courseService.DeleteCourseById(req.params.courseId);
+
+            return res.json({
+                message: "ok",
+                data: DTO
+            })
+        } catch (error) {
+            next(error);           
+        }
+    },
+    UpdateCourseById: async(req, res, next) => {
+        try {
+            const DTO = await courseService.UpdateCourseById(req.params.id);
+
+            return {
+                message: "ok",
+                data: DTO
+            }
+        } catch (error) {
+            next(error);            
+        }
     }
 }

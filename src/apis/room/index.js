@@ -18,4 +18,6 @@ route.get('/:id', roomController.GetRoomById);
 
 route.get('/', roomController.GetAllRoom)
 
+route.get('/search/:name', roomController.SearchByName);
+
 module.exports = route;

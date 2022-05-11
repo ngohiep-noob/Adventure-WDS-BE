@@ -31,7 +31,7 @@ const CourseSchema = new mongoose.Schema(
         default: "",
       },
     },
-    pdf: {
+    pdf: [{
       url: {
         type: String,
         default: "",
@@ -40,7 +40,11 @@ const CourseSchema = new mongoose.Schema(
         type: String,
         default: "",
       },
-    },
+      name: {
+        type: String,
+        default: ""
+      }
+    }],
     videos: [
       {
         url: {
@@ -57,7 +61,11 @@ const CourseSchema = new mongoose.Schema(
         }
       },
       { default: [] },
-    ]
+    ],
+    author: {
+      type: mongoose.Types.ObjectId,
+      ref: 'users'
+    }
   },
   { collection: "course", timestamps: true }
 );

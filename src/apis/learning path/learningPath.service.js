@@ -2,6 +2,7 @@ const createHttpError = require("http-errors");
 const LearningPath = require("../../model/learningPath");
 const { default: mongoose } = require("mongoose");
 const { StoreThumbToDB } = require("../../service/uploadMedia");
+const searchByName = require("../../service/searchByName");
 
 module.exports = {
   CreateLearningPath: async ({ body, files }) => {
@@ -22,14 +23,10 @@ module.exports = {
       });
 
       if (files.thumb) {
-        const fileId = files.thumb[0].filename.split("/").at(-1),
-          filePath = files.thumb[0].path;
-
         const thumbInfo = await StoreThumbToDB(
           LearningPath,
           resDB._id,
-          filePath,
-          fileId
+          files.thumb[0]
         );
 
         var thumbnail = thumbInfo;
@@ -115,6 +112,18 @@ module.exports = {
       };
     } catch (error) {
       throw new createHttpError(error);
+    }
+  },
+  SearchByName: async (name) => {
+    try {
+      if (!name) {
+        throw new createHttpError(400, "Learning path name is required!");
+      }
+
+      const resDB = await searchByName(LearningPath, name);
+      return resDB;
+    } catch (error) {
+      throw new createHttpError(error.message || 500, error.message);
     }
   },
 };

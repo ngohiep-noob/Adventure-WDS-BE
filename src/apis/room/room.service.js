@@ -41,14 +41,10 @@ module.exports = {
       });
 
       if (files.thumb) {
-        const fileId = files.thumb[0].filename.split("/").at(-1),
-          filePath = files.thumb[0].path;
-
         const thumbInfo = await StoreThumbToDB(
           Room,
           resDB._id,
-          filePath,
-          fileId
+          files.thumb
         );
 
         var thumbnail = thumbInfo;
@@ -139,5 +135,17 @@ module.exports = {
     } catch (error) {
       throw new createHttpError(error);
     }
-  }
+  },
+  SearchByName: async (name) => {
+    try {
+      if (!name) {
+        throw new createHttpError(400, "roomName is required!");
+      }
+
+      const resDB = await searchByName(Room, name);
+      return resDB;
+    } catch (error) {
+      throw new createHttpError(error.message || 500, error.message);
+    }
+  },
 };

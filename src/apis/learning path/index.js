@@ -23,4 +23,7 @@ route.get("/:id", learningPathController.GetLearningPathById);
 
 route.get('/', learningPathController.GetAllLearningPath);
 
+
+route.get('/search/:name', learningPathController.SearchByName);
+
 module.exports = route;

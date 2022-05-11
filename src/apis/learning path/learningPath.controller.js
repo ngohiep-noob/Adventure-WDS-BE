@@ -36,5 +36,17 @@ module.exports = {
         } catch (error) {
             next(error);
         }
+    },
+    SearchByName: async(req, res, next) => {
+        try {
+            const DTO = await learningPathService.SearchByName(req.params.name);
+
+            return res.json({
+                message: "ok",
+                data: DTO
+            })
+        } catch (error) {
+            next(error);
+        }
     }
 }

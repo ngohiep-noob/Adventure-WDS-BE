@@ -2,40 +2,49 @@ const createHttpError = require("http-errors");
 const { default: mongoose } = require("mongoose");
 const Course = require("../../model/course.js");
 const {
-  StoreThumbToDB,
-  StoreVideoToDB,
+  UploadAndStoreThumbToDB: StoreThumbToDB,
+  UploadAndStoreVideoToDB: StoreVideoToDB,
+  UploadAndStorePDFToDB: StorePDFToDB,
 } = require("../../service/uploadMedia.js");
+const User = require("../../model/user");
+const { deleteFile } = require("../../service/deleteMedia.js");
 
 module.exports = {
-  CreateNewCourse: async ({ body, files }) => {
+  CreateNewCourse: async ({ body, files, userInfo }) => {
     try {
       let { name, views, rating, description } = body;
+      const authorId = userInfo.userId;
       views = views ? views : 0;
       rating = rating ? rating : 0;
       if (!description || !name) {
         throw new createHttpError(400, "Description and name is required!");
       }
-      const resDB = await Course.create({ name, views, rating, description });
+      const resDB = await Course.create({
+        name,
+        views,
+        rating,
+        description,
+        author: authorId,
+      });
+
+      // update author's course
+      await User.findByIdAndUpdate(authorId, {
+        $push: { courses: resDB._id },
+      });
 
       let resUploadMedia = {};
-
       //upload file
       if (files.thumb) {
-        const fileId = files.thumb[0].filename.split("/").at(-1),
-          filePath = files.thumb[0].path;
-
         const thumbInfo = await StoreThumbToDB(
           Course,
           resDB._id,
-          filePath,
-          fileId
+          files.thumb[0]
         );
 
         resUploadMedia.thumbnail = thumbInfo;
       }
 
       if (files.videos) {
-        console.log(files.videos[0]);
         const videosInfo = await StoreVideoToDB(
           Course,
           resDB._id,
@@ -43,6 +52,12 @@ module.exports = {
         );
 
         resUploadMedia.videos = videosInfo;
+      }
+
+      if (files.pdf) {
+        const pdfInfo = await StorePDFToDB(Course, resDB._id, files.pdf);
+
+        resUploadMedia.pdf = pdfInfo;
       }
 
       return {
@@ -121,15 +136,40 @@ module.exports = {
         throw new createHttpError(400, "courseName is required!");
       }
 
-      const resDB = await Course.find({
-        name: {
-          $regex: name,
-          $options: 'i',
-        },
-      });
+      const resDB = await searchByName(Course, name);;
       return resDB;
     } catch (error) {
       throw new createHttpError(error.message || 500, error.message);
     }
   },
+  DeleteCourseById: async(courseId) => {
+    try {
+      const courseInfo = await Course.findById(courseId);
+      if(courseInfo) {
+        //delete thumbnail
+        await deleteFile(courseInfo.thumbnail.id)
+        //delete video
+        await Promise.all(courseInfo.videos.map(vid => {
+          return deleteFile(vid.id);
+        }))
+        //delete pdf
+        await Promise.all(courseInfo.pdf.map(pdf => {
+          return deleteFile(pdf.id);
+        }))
+        await Course.findByIdAndDelete(courseId);
+      }
+      return {
+        message: "ok"
+      }
+    } catch (error) {
+      throw new createHttpError(error.statusCode || 500, error.message)
+    }
+  }, 
+  updateCourseById: async(courseId) => {
+    try {
+      
+    } catch (error) {
+      throw new createHttpError(error.statusCode || 500, error.message)
+    }
+  }
 };
