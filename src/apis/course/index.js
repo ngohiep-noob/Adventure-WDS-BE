@@ -38,5 +38,4 @@ route.get("/search/:name", courseController.SearchCourse);
 
 route.delete("/:courseId", courseController.DeleteCourseById);
 
-route.put('/:courseId', courseController.UpdateCourseById);
 module.exports = route;

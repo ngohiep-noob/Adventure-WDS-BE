@@ -164,12 +164,5 @@ module.exports = {
     } catch (error) {
       throw new createHttpError(error.statusCode || 500, error.message)
     }
-  }, 
-  updateCourseById: async(courseId) => {
-    try {
-      
-    } catch (error) {
-      throw new createHttpError(error.statusCode || 500, error.message)
-    }
   }
 };
