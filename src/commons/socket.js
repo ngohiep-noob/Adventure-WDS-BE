@@ -24,16 +24,15 @@ function init(server) {
                 })
 
                 
-                const resDB = await User.findById(senderId);
+                await saveChatRes.populate("sender");
 
                 //save chat to chat field of room
                 await Room.findByIdAndUpdate(roomId, {
                     $push: { chat: saveChatRes._id}
                 })
                 
-                
                 let responseChat = {
-                    senderName: resDB.username,
+                    senderName: saveChatRes.sender.username,
                     content: content
                 }
                 io.emit('from-server', responseChat)

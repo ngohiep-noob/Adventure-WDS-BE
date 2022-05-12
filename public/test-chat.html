@@ -34,7 +34,7 @@
 
     // const sender1 = "627657beadcae0d5465bc84b",
     //   sender2 = "627657b8adcae0d5465bc843";
-    const roomId = '627721eeb1263687614d946b'
+    const roomId = '6279271a6bb96b6ae60c5973'
     const sendMessage = (content) => {
       socket.emit("from-client", {
         content,
@@ -71,7 +71,7 @@
       sendMessage(message);
     });
     const token =
-      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2Mjc3MWU4MGIxOTg4NjBjZjljYTI0MjEiLCJ1c2VybmFtZSI6InN0dWRlbnQgOCIsInJvbGUiOnsiaXNUZWFjaGVyIjpmYWxzZSwiaXNQcm9Vc2VyIjpmYWxzZX0sImlhdCI6MTY1MjA4MTc3MCwiZXhwIjoxNjUyMDk5NzcwfQ.Xx5EUoUeoHV_IwxiNNGR2J2AHWOdF7p0GquHyJeB_EM";
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2Mjc5MWVjMjY4N2ZlZDI0ZDNjNDFkMzIiLCJ1c2VybmFtZSI6Ik5nbyBoaWVwIG5lZSIsInJvbGUiOnsiaXNUZWFjaGVyIjpmYWxzZSwiaXNQcm9Vc2VyIjpmYWxzZX0sImlhdCI6MTY1MjM2NjI1NiwiZXhwIjoxNjUyMzg0MjU2fQ.0COM4x2OjF73qyoJD8-p-fI26rhTyZteeNPtUoBnuG4";
 
     window.addEventListener("load", async () => {
       const localUrl = "http://localhost:3000/api/chat/"
@@ -79,7 +79,7 @@
       //fetch history chat
       const res = await axios({
         method: "get",
-        url: publicUrl + roomId,
+        url: localUrl + roomId,
         headers: {
           Authorization: "Bearer " + token,
         },
