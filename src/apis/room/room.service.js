@@ -4,6 +4,7 @@ const createHttpError = require("http-errors");
 const mongoose = require("mongoose");
 const { StoreThumbToDB } = require("../../service/uploadMedia.js");
 const learningPath = require("../../model/learningPath.js");
+const { SearchByName} = require('../../service/searchByName')
 
 module.exports = {
   CreateRoom: async ({ body, files, userInfo }) => {
@@ -142,7 +143,7 @@ module.exports = {
         throw new createHttpError(400, "roomName is required!");
       }
 
-      const resDB = await searchByName(Room, name);
+      const resDB = await SearchByName(Room, name);
       return resDB;
     } catch (error) {
       throw new createHttpError(error.message || 500, error.message);

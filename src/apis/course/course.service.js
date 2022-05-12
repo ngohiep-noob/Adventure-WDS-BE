@@ -8,6 +8,7 @@ const {
 } = require("../../service/uploadMedia.js");
 const User = require("../../model/user");
 const { deleteFile } = require("../../service/deleteMedia.js");
+const { SearchByName } = require('../../service/searchByName')
 
 module.exports = {
   CreateNewCourse: async ({ body, files, userInfo }) => {
@@ -136,7 +137,7 @@ module.exports = {
         throw new createHttpError(400, "courseName is required!");
       }
 
-      const resDB = await searchByName(Course, name);;
+      const resDB = await SearchByName(Course, name);;
       return resDB;
     } catch (error) {
       throw new createHttpError(error.message || 500, error.message);

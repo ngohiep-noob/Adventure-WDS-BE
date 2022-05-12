@@ -18,7 +18,7 @@ route.get('/:roomId', VerifyToken, async(req, res, next) => {
     try {
         const {userId} = req.userInfo;
         const {roomId} = req.params;
-        const LIMIT = 10;
+        const LIMIT = 50;
         //fetch chat from database
         const room = await Room.findById(roomId);
 
