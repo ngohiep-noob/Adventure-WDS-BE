@@ -36,6 +36,6 @@ route.post(
 //search course
 route.get("/search/:name", courseController.SearchCourse);
 
-route.delete("/:courseId", courseController.DeleteCourseById);
+route.delete("/:courseId", VerifyToken, VerifyTeacher,courseController.DeleteCourseById);
 
 module.exports = route;
