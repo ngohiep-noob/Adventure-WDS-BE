@@ -2,7 +2,7 @@ const createHttpError = require("http-errors");
 const LearningPath = require("../../model/learningPath");
 const { default: mongoose } = require("mongoose");
 const { StoreThumbToDB } = require("../../service/uploadMedia");
-const searchByName = require("../../service/searchByName");
+const {SearchByName} = require("../../service/searchByName");
 
 module.exports = {
   CreateLearningPath: async ({ body, files }) => {
@@ -120,7 +120,7 @@ module.exports = {
         throw new createHttpError(400, "Learning path name is required!");
       }
 
-      const resDB = await searchByName(LearningPath, name);
+      const resDB = await SearchByName(LearningPath, name);
       return resDB;
     } catch (error) {
       throw new createHttpError(error.message || 500, error.message);
