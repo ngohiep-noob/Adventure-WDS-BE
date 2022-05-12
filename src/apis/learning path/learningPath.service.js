@@ -121,6 +121,11 @@ module.exports = {
       }
 
       const resDB = await SearchByName(LearningPath, name);
+      
+      await Promise.all(resDB.map(e => {
+        return e.populate('courses')
+      }))
+
       return resDB;
     } catch (error) {
       throw new createHttpError(error.message || 500, error.message);

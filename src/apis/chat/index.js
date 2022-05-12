@@ -4,6 +4,7 @@ const path = require('path')
 const { VerifyToken } = require('../../middleware/Authorization')
 const Room = require('../../model/room')
 const Chat = require('../../model/chat')
+const User = require('../../model/user');
 
 route.get('/', (req, res, next) => {
     try {
@@ -63,9 +64,11 @@ route.delete('/clear/:roomId', VerifyToken,async(req, res, next) => {
 
         const room = await Room.findById(roomId);
 
-        //check if user are in room
-        if(!room.members.includes(userId) && room.creator != userId) {
-            throw new createHttpError(401, "User doesn't includes in room!");
+        if(userId != room.creator)
+        {
+            return res.status(401).json({
+                message: "Unauthorization"
+            })
         }
 
         const resDel = await Promise.all(room.chat.map(c => {

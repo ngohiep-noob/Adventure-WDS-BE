@@ -10,7 +10,7 @@ function init(server) {
         console.log("socket connected!");
         socket.on('from-client',async function(data) {
             try {
-                console.log(data);
+                // console.log(data);
                 const {senderId, content, roomId} = data;
 
                 if(!senderId || !content) {
